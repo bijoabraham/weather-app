@@ -1,6 +1,9 @@
 const yargs = require("yargs");
 const geoLocation = require("./googlegeo/geolocation");
+const geoLocationPromise = require("./googlegeo/geolocationPromise");
+
 const weather = require("./weatherapi/weather");
+const weatherPromise = require("./weatherapi/weatherPromise");
 
 const args = yargs
     .options({
@@ -17,7 +20,15 @@ const args = yargs
 
 var encodedAddress = encodeURIComponent(args.a);
 
-geoLocation.getGeoLocationForAddress(encodedAddress,(errorMessage,result)=>{
+geoLocationPromise.getGeoLocationForAddress(encodedAddress).then((result)=>{
+        //console.log(JSON.stringify(result,undefined,2));
+        return  weatherPromise.getTemparature(result.Latitude,result.Longitude);
+    }).then((temp)=>{
+            console.log(`Temperature :${temp}`) ;
+        }).catch((error)=>{
+            console.log(error);
+            });
+/*geoLocation.getGeoLocationForAddress(encodedAddress,(errorMessage,result)=>{
     if(errorMessage){
         console.log(errorMessage);
     }else{
@@ -29,4 +40,4 @@ geoLocation.getGeoLocationForAddress(encodedAddress,(errorMessage,result)=>{
             }
         });
     }    
-});
+});*/
